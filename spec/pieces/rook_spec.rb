@@ -12,6 +12,10 @@ describe Rook do
 		it "has a color" do
 			expect(rook.color).to eq("Black")
 		end
+
+		it "has the correct symbol" do
+			expect(rook.symbol).to eq("♜")
+		end
 	end
 
 	describe "#search" do

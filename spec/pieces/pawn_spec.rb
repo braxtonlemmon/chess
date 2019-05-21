@@ -12,8 +12,11 @@ describe Pawn do
 		it "has a color" do
 			expect(pawn.color).to eq("White")
 		end
-	end
 
+		it "has the correct symbol" do
+			expect(pawn.symbol).to eq("♙")
+		end
+	end
 
 	describe "#search" do
 		context "when pawn has not yet moved" do
@@ -22,6 +25,7 @@ describe Pawn do
 			end
 		end
 	end
+		
 end
 
 			

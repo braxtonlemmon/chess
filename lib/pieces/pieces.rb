@@ -1,6 +1,6 @@
 module Pieces
 	class Piece
-		attr_accessor :color, :rank, :file, :moves
+		attr_accessor :color, :rank, :file, :moves, :symbol
 
 		def initialize(rank, file)
 			@rank = rank

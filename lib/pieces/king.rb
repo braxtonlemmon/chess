@@ -6,6 +6,7 @@ class King < Pieces::Piece
 	def initialize(rank, file)
 		super
 		@traveled = false
+		@symbol = @color == "White" ? "\u265A".encode('utf-8') : "\u2654".encode('utf-8')
 	end
 
 	def search

@@ -12,6 +12,10 @@ describe Bishop do
 		it "has a color" do
 			expect(bishop.color).to eq("White")
 		end
+
+		it "has the correct symbol" do
+			expect(bishop.symbol).to eq("♗")
+		end
 	end
 
 	describe "#search" do

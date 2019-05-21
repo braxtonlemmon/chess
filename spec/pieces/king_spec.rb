@@ -12,6 +12,10 @@ describe King do
 		it "has a color" do
 			expect(king.color).to eq("White")
 		end
+
+		it "has the correct symbol" do
+			expect(king.symbol).to eq("♔")
+		end
 	end
 
 	describe "#search" do
