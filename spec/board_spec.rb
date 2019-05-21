@@ -57,6 +57,7 @@ describe Board do
 		before(:each) { board.set }
 		context "when a move is allowed" do
 			it "returns true" do
+				board.show
 				expect(board.allowed?("e2", "e3")).to eq(true)
 			end
 		end
@@ -242,6 +243,32 @@ describe Board do
 		end
 	end
 
+	describe "#spot_available?" do
+		before(:each) do
+			board.set
+			board.move("g2","g3")
+			board.move("h2","h3")
+		end
+
+		context "when spot is occupied with same color" do
+			it "returns false" do
+				expect(board.spot_available?([7,5],[5,7])).to eq(false)
+			end
+		end
+
+		context "when spot is empty" do
+			it "returns true" do
+				expect(board.spot_available?([7,5],[6,6])).to eq(true)
+			end
+		end
+
+		context "when spot is occupied with other color" do
+			it "returns true" do 
+				board.move("f1","g2")
+				expect(board.spot_available?([6,6],[1,1])).to eq(true)
+			end
+		end
+	end
 
 			
 end

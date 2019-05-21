@@ -7,10 +7,12 @@ require "./lib/pieces/pawn.rb"
 
 
 class Board
-	attr_accessor :grid
+	attr_accessor :grid, :from, :to
 
 	def initialize
 		@grid = Array.new(8) { Array.new(8) { " " } }
+		@from = Array.new(2)
+		@to = Array.new(2)
 	end
 
 	def occupied?(location)
@@ -54,11 +56,20 @@ class Board
 		(grid[rank][file] == " ") ? true : false
 	end
 
+	def spot_available?(from, to)
+		return true if spot_empty?(to[0], to[1])
+		color1 = grid[from[0]][from[1]].color
+		color2 = grid[to[0]][to[1]].color
+		return true if color1 != color2
+		false
+	end
+
 	def move(from, to)
 		from = convert(from)
 		to = convert(to)
 		grid[to[0]][to[1]] = grid[from[0]][from[1]]
 		grid[from[0]][from[1]] = " "
+
 	end
 
 	def convert(spot)
@@ -72,7 +83,7 @@ class Board
 		from = convert(from)
 		to = convert(to)
 		piece_moves = grid[from[0]][from[1]].search
-		return true if spot_empty?(to[0], to[1]) && piece_moves.include?(to) # && path_clear?
+		return true if piece_moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
 		false
 	end
 
