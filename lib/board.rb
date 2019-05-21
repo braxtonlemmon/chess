@@ -65,23 +65,11 @@ class Board
 	end
 
 	def move(from, to)
-		from = convert(from)
-		to = convert(to)
 		grid[to[0]][to[1]] = grid[from[0]][from[1]]
 		grid[from[0]][from[1]] = " "
-
-	end
-
-	def convert(spot)
-		char = { "a" => 0, "b" => 1, "c" => 2, "d" => 3, "e" => 4, "f" => 5, "g" => 6,	"h" => 7, 
-						 "8" => 0, "7" => 1, "6" => 2, "5" => 3, "4" => 4, "3" => 5, "2" => 6,	"1" => 7 }
-		spot = spot.split("")
-		[char[spot[1]], char[spot[0]]]
 	end
 
 	def allowed?(from, to)
-		from = convert(from)
-		to = convert(to)
 		piece_moves = grid[from[0]][from[1]].search
 		return true if piece_moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
 		false
