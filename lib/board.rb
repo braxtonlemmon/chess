@@ -16,10 +16,6 @@ class Board
 		set
 	end
 
-	def occupied?(location)
-		return grid[location[0]][location[1]] == " " ? false : true
-	end
-
 	def set
 		rooks   = [[0, 0], [0, 7], [7, 0], [7, 7]]
 		knights = [[0, 1], [0, 6], [7, 1], [7, 6]]
@@ -63,11 +59,6 @@ class Board
 		color2 = grid[to[0]][to[1]].color
 		return true if color1 != color2
 		false
-	end
-
-	def move(from, to)
-			update_piece(from, to)
-			show
 	end
 
 	def update_piece(from, to)
