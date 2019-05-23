@@ -13,6 +13,7 @@ class Board
 		@grid = Array.new(8) { Array.new(8) { " " } }
 		@from = Array.new(2)
 		@to = Array.new(2)
+		set
 	end
 
 	def occupied?(location)
@@ -65,6 +66,13 @@ class Board
 	end
 
 	def move(from, to)
+			update_piece(from, to)
+			show
+	end
+
+	def update_piece(from, to)
+		piece = grid[from[0]][from[1]]
+		piece.rank, piece.file = to[0], to[1]
 		grid[to[0]][to[1]] = grid[from[0]][from[1]]
 		grid[from[0]][from[1]] = " "
 	end
@@ -121,6 +129,8 @@ class Board
 			return true if vertical_clear?(from, to)
 		elsif ((from[0] - to[0])**2) == ((from[1] - to[1])**2)
 			return true if diagonal_clear?(from, to)
+		elsif grid[from[0]][from[1]].class == Knight
+			return true
 		end
 		false
 	end
