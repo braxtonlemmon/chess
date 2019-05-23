@@ -14,7 +14,7 @@ describe Queen do
 		end
 
 		it "has the correct symbol" do
-			expect(queen.symbol).to eq("♕")
+			expect(queen.symbol).to eq("♛")
 		end
 	end
 

@@ -32,5 +32,13 @@ describe Game do
 		end
 	end
 
+	describe "#color_ok?" do
+		context "when color of @current matches selected piece" do
+			it "returns true" do 
+				expect(game.color_ok?([1,0])).to eq(true)
+			end
+		end
+	end
+
 
 end

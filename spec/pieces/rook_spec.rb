@@ -14,7 +14,7 @@ describe Rook do
 		end
 
 		it "has the correct symbol" do
-			expect(rook.symbol).to eq("♜")
+			expect(rook.symbol).to eq("♖")
 		end
 	end
 

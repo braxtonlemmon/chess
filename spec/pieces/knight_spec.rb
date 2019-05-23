@@ -14,7 +14,7 @@ describe Knight do
 		end
 
 		it "has the correct symbol" do
-			expect(knight.symbol).to eq("♞")
+			expect(knight.symbol).to eq("♘")
 		end
 	end
 

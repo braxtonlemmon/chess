@@ -12,10 +12,9 @@ class Game
 	end
 
 	def ask_user_choice
-		puts "#{current.color}, it is your turn."
-		puts "Enter coordinates of piece you wish to move: "
+		puts "#{current.color}, enter coordinates of piece to move: "
 		from = gets.chomp
-		puts "Enter coordinates of where you wish to move #{from}: "
+		puts "Enter coordinates of where to move #{from}: "
 		to = gets.chomp
 		[convert(from), convert(to)]
 	end
@@ -31,19 +30,26 @@ class Game
 		@current = @current.color == "White" ? @black : @white
 	end
 
+	def color_ok?(from)
+		@board.grid[from[0]][from[1]].color == @current.color ? true : false
+	end
+
 	def turn
 		while true
 			from, to = ask_user_choice
-			if board.allowed?(from, to)
+			if color_ok?(from) && board.allowed?(from, to)
 				board.update_piece(from, to)
+				board.show
 				break
 			else
+				board.show
 				puts "You can't do that."
 			end
 		end
 	end
 
 	def play
+		board.show
 		while true
 			turn
 			swap

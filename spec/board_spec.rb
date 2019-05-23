@@ -247,7 +247,7 @@ describe Board do
 				expect(board.spot_available?([6,6],[1,1])).to eq(true)
 			end
 		end
-	end		
+	end	
 end
 
 =begin 

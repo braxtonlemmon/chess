@@ -14,7 +14,7 @@ describe Pawn do
 		end
 
 		it "has the correct symbol" do
-			expect(pawn.symbol).to eq("♙")
+			expect(pawn.symbol).to eq("♟")
 		end
 	end
 

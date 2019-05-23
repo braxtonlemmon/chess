@@ -14,7 +14,7 @@ describe King do
 		end
 
 		it "has the correct symbol" do
-			expect(king.symbol).to eq("♔")
+			expect(king.symbol).to eq("♚")
 		end
 	end
 

@@ -69,11 +69,12 @@ class Board
 	end
 
 	def allowed?(from, to)
-		piece_moves = grid[from[0]][from[1]].search
-		return true if piece_moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
+		return false if spot_empty?(from[0], from[1])
+		moves = grid[from[0]][from[1]].search
+		return true if moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
 		false
 	end
-
+	
 	def horizontal_clear?(from, to)
 		files = from[1] < to[1] ? ((from[1] + 1)...to[1]) : ((to[1] + 1)...from[1])
 		return true if files.all? { |file| spot_empty?(from[0], file) }

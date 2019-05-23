@@ -14,7 +14,7 @@ describe Bishop do
 		end
 
 		it "has the correct symbol" do
-			expect(bishop.symbol).to eq("♗")
+			expect(bishop.symbol).to eq("♝")
 		end
 	end
 
