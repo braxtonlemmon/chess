@@ -247,8 +247,31 @@ describe Board do
 				expect(board.spot_available?([6,6],[1,1])).to eq(true)
 			end
 		end
-	end	
+	end
+	
+	describe "#in_check?" do
+		xit "flattens the board" do
+			expect(board.in_check)
+		end
+		xit "blah blah" do
+			board.update_piece([6,4],[4,4])
+			board.update_piece([1,3],[2,3])
+			board.update_piece([7,5],[3,1])
+			board.update_piece([1,4],[3,4])
+			board.show
+		end
+	end
+
 end
+=begin
+	#in_check?
+	--flatten board
+	--look at pieces of opposite color one by one
+	--if the piece's possible moves includes the king...
+		--see if that move is allowed
+		--if yes, king is in_check
+	--otherwise, return false
+=end
 
 =begin 
 * user inputs location of piece to move (from)

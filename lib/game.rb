@@ -34,6 +34,21 @@ class Game
 		@board.grid[from[0]][from[1]].color == @current.color ? true : false
 	end
 
+	def locate_king
+		board.grid.flatten.find do |square| 
+			square.class == King && square.color == current.color 
+		end
+	end
+
+	def check?
+		king = locate_king
+		board.grid.flatten.any? do |piece|
+			if piece.class != String && piece.color != king.color
+				board.allowed?([piece.rank, piece.file], [king.rank, king.file])
+			end
+		end
+	end
+
 	def turn
 		while true
 			from, to = ask_user_choice
