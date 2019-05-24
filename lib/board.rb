@@ -63,6 +63,7 @@ class Board
 
 	def update_piece(from, to)
 		piece = grid[from[0]][from[1]]
+		piece.traveled = true if piece.class == King || piece.class == Rook
 		piece.rank, piece.file = to[0], to[1]
 		grid[to[0]][to[1]] = grid[from[0]][from[1]]
 		grid[from[0]][from[1]] = " "
@@ -126,5 +127,7 @@ class Board
 		end
 		false
 	end
+
+	
 
 end

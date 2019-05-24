@@ -40,7 +40,16 @@ describe Game do
 		end
 	end
 
-	describe "#in_check?" do
+	describe "#locate_king" do
+		it "gives coordinates of king of current player" do
+			p game.current
+			p game.white
+			p game.black
+			expect(game.locate_king).to eq([7,4])
+		end
+	end
+
+	describe "#check?" do
 		before(:each) do
 			game.board.update_piece([6,4],[4,4])
 			game.board.update_piece([1,3],[2,3])
@@ -49,14 +58,14 @@ describe Game do
 		end
 		
 		context "when king is in check" do
-			it "returns true" do
+			xit "returns true" do
 				expect(game.check?).to eq(true)
 				game.board.show
 			end
 		end
 
 		context "when king is not in check" do
-			it "returns false" do
+			xit "returns false" do
 				game.board.update_piece([0,3],[1,3])
 				expect(game.check?).to eq(false)
 				game.board.show

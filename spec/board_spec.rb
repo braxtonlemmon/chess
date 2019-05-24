@@ -262,6 +262,48 @@ describe Board do
 		end
 	end
 
+	describe "#can_castle?" do
+		let(:from) { [7, 4] }
+		let(:to)   { [7, 6] }
+		
+		context "when path is not clear" do
+			it "returns false" do
+				expect(board.can_castle?(from, to)).to eq(false)
+			end
+		end
+
+		context "when path is clear" do
+			before(:each) do
+				board.update_piece([6,4],[5,4])
+				board.update_piece([6,6],[5,6])
+				board.update_piece([7,6],[5,5])
+				board.update_piece([7,5],[6,4])
+			end
+
+
+			context "when no space is under attack" do
+				context "when neither king nor rook has moved" do
+					xit "returns true" do
+						expect(board.can_castle?(from, to)).to eq(true)
+					end
+				end
+
+				context "when either king or rook has moved" do
+					xit "returns false" do
+						expect(board.can_castle?(from, to)).to eq(false)
+					end
+				end
+			end
+
+			context "when a square on path is under attack" do
+				xit "returns false" do
+					expect(board.can_castle?(from, to)).to eq(false)
+				end
+			end
+		end
+	end
+
+
 end
 =begin
 	#in_check?

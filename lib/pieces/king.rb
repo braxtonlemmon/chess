@@ -1,5 +1,4 @@
 require "./lib/pieces/pieces.rb"
-require "./lib/board.rb"
 
 class King < Pieces::Piece 
 	attr_accessor :traveled
