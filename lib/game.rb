@@ -30,15 +30,6 @@ class Game
 		@current = @current.color == "White" ? @black : @white
 	end
 
-	# def check?
-	# 	king = locate_king
-	# 	board.grid.flatten.any? do |piece|
-	# 		if piece.class != String && piece.color != king.color
-	# 			board.allowed?([piece.rank, piece.file], [king.rank, king.file])
-	# 		end
-	# 	end
-	# end
-
 	def locate_king
 		king = board.grid.flatten.find do |square| 
 			square.class == King && square.color == current.color 
@@ -51,10 +42,6 @@ class Game
 	end
 
 	def under_attack?(spot)
-		# board.grid.any? do |row|
-		# 	row.any? { |piece| board.allowed?([piece.rank, piece.file], spot) if piece.class != String }
-		# end
-
 		board.grid.any? do |row|
 			row.any? do |piece|
 				board.allowed?([piece.rank, piece.file], spot) if piece.class != String && piece.color != current.color
@@ -63,15 +50,9 @@ class Game
 	end
 
 	def can_castle?(from, to)
-		if to[1] == 6
-			files = (4..7)
-			corner = [to[0], 7]
-		else
-			files = (0..4)
-			corner = [to[0], 0]
-		end
-		
-		king = board.grid[locate_king[0]][locate_king[1]]
+		files  = to[1] == 6 ? (4..7)     : (0..4)
+		corner = to[1] == 6 ? [to[0], 7] : [to[0], 0]	
+		king = board.grid[from[0]][from[1]]
 		rook = board.grid[corner[0]][corner[1]]
 		return false if king.traveled || rook.traveled
 		return false unless board.path_clear?(from, corner)
