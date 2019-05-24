@@ -30,10 +30,6 @@ class Game
 		@current = @current.color == "White" ? @black : @white
 	end
 
-	def color_ok?(from)
-		@board.grid[from[0]][from[1]].color == @current.color ? true : false
-	end
-
 	def locate_king
 		board.grid.flatten.find do |square| 
 			square.class == King && square.color == current.color 
@@ -49,12 +45,15 @@ class Game
 		end
 	end
 
+	def color_ok?(from)
+		@board.grid[from[0]][from[1]].color == @current.color ? true : false
+	end
+
 	def turn
 		while true
 			from, to = ask_user_choice
 			if color_ok?(from) && board.allowed?(from, to)
 				board.update_piece(from, to)
-				board.show
 				break
 			else
 				board.show
@@ -64,8 +63,8 @@ class Game
 	end
 
 	def play
-		board.show
 		while true
+			board.show
 			turn
 			swap
 		end
