@@ -75,3 +75,15 @@ describe Game do
 
 
 end
+
+=begin 
+I'm thinking of two options for the en passant, promotion, castle, and pawn takeover:
+
+	1) Have a method called #special_moves that checks conditions for the 
+			existence of special moves. It will call the specific method associated with
+			whatever the special move is
+
+	2) Store the special moves in methods in each piece class. Turn the 
+
+
+=end

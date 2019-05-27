@@ -14,4 +14,5 @@ class King < Pieces::Piece
 		@moves.push([0,2], [0,-2]) unless @traveled
 		possible_moves
 	end
+
 end

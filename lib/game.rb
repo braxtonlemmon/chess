@@ -12,13 +12,19 @@ class Game
 	end
 
 	def ask_user_choice
-		puts "#{current.color}, enter coordinates of piece to move: "
-		from = gets.chomp
-		puts "Enter coordinates of where to move #{from}: "
-		to = gets.chomp
+		from = ""
+		to = ""
+		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
+			puts "#{current.color}, enter coordinates of piece to move: "
+			from = gets.chomp
+		end
+		until (to[0] =~ /[a-h]/) && (to[1] =~ /[1-8]/) && to.length == 2
+			puts "Enter coordinates of where to move #{from}: "
+			to = gets.chomp
+		end
 		[convert(from), convert(to)]
 	end
-
+		
 	def convert(spot)
 		spot = spot.split("")
 		char = { "a" => 0, "b" => 1, "c" => 2, "d" => 3, "e" => 4, "f" => 5, "g" => 6,	"h" => 7, 
@@ -60,6 +66,13 @@ class Game
 		true
 	end
 
+	def castle(from, to)
+		corner = to[1] == 6 ? [to[0], 7] : [to[0], 0]
+		inward = to[1] == 6 ? [to[0], 5] : [to[0], 3]
+		board.update_piece(from, to)
+		board.update_piece(corner, inward)
+	end
+
 	def color_ok?(from)
 		@board.grid[from[0]][from[1]].color == @current.color ? true : false
 	end
@@ -68,8 +81,8 @@ class Game
 		while true
 			board.show
 			from, to = ask_user_choice
-			if color_ok?(from) && board.allowed?(from, to)
-				board.update_piece(from, to)
+			if board.allowed?(from, to) && color_ok?(from)
+				determine_move(from, to)
 				break
 			else
 				board.show
@@ -85,5 +98,21 @@ class Game
 			swap
 		end
 	end
+
+	def determine_move(from, to)
+		piece = board.grid[from[0]][from[1]]
+		if piece.class == King && ((from[1]-to[1])**2) == 4
+			castle(from, to) if can_castle?(from, to)
+		elsif piece.class == Pawn 
+		# 	en_passant
+		# 	promotion
+		# 	pawn_attack
+			board.update_piece(from, to)
+		else
+			board.update_piece(from, to)
+		end
+	end
+
+
 
 end
