@@ -6,8 +6,8 @@ class Game
 
 	def initialize
 		
-		@white = Player.new
-		@black = Player.new
+		@white = Player.new("White")
+		@black = Player.new("Black")
 		@current = @white
 		@board = Board.new
 	end

@@ -2,6 +2,7 @@ require "./lib/game.rb"
 
 describe Game do
 	let(:game) { Game.new }
+
 	
 	describe "#initialize" do
 		it "makes white (first) player the color white" do
@@ -35,16 +36,13 @@ describe Game do
 	describe "#color_ok?" do
 		context "when color of @current matches selected piece" do
 			it "returns true" do 
-				expect(game.color_ok?([1,0])).to eq(true)
+				expect(game.color_ok?([6,0])).to eq(true)
 			end
 		end
 	end
 
 	describe "#locate_king" do
 		it "gives coordinates of king of current player" do
-			p game.current
-			p game.white
-			p game.black
 			expect(game.locate_king).to eq([7,4])
 		end
 	end
@@ -55,17 +53,18 @@ describe Game do
 			game.board.update_piece([1,3],[2,3])
 			game.board.update_piece([7,5],[3,1])
 			game.board.update_piece([1,4],[3,4])
+			game.swap
 		end
 		
 		context "when king is in check" do
-			xit "returns true" do
+			it "returns true" do
 				expect(game.check?).to eq(true)
 				game.board.show
 			end
 		end
 
 		context "when king is not in check" do
-			xit "returns false" do
+			it "returns false" do
 				game.board.update_piece([0,3],[1,3])
 				expect(game.check?).to eq(false)
 				game.board.show
