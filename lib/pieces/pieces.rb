@@ -2,10 +2,14 @@ module Pieces
 	class Piece
 		attr_accessor :color, :rank, :file, :moves, :symbol
 
-		def initialize(rank, file)
+		def initialize(rank, file, color=nil)
 			@rank = rank
 			@file = file
-			@color = (@rank < 2 ? "Black" : "White" )
+			@color = color == nil ? define_color : color
+		end
+
+		def define_color
+			@rank < 2 ? "Black" : "White"
 		end
 
 		def ok_move?(distance)

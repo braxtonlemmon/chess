@@ -69,6 +69,25 @@ class Board
 		grid[from[0]][from[1]] = " "
 	end
 
+	def promote(from, to)
+		color = grid[from[0]][from[1]].color
+		pieces = {
+			"r" => Rook.new(to[0], to[1], color),
+			"b" => Bishop.new(to[0], to[1], color),
+			"k" => Knight.new(to[0], to[1], color),
+			"q" => Queen.new(to[0], to[1], color)
+		}
+		piece = ""
+		until piece =~ /[rbkq]/
+			puts "Choose which piece to promote to:"
+			puts "[r] for rook / [b] for bishop / [k] for knight / [q] for queen"
+			piece = gets.chomp
+		end
+		grid[to[0]][to[1]] = pieces[piece]
+		grid[from[0]][from[1]] = " "
+	
+	end
+
 	def allowed?(from, to)
 		return false if spot_empty?(from[0], from[1])
 		moves = grid[from[0]][from[1]].search

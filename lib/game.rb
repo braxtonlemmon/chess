@@ -5,6 +5,7 @@ class Game
 	attr_reader :white, :black, :current, :board
 
 	def initialize
+		
 		@white = Player.new
 		@black = Player.new
 		@current = @white
@@ -12,6 +13,7 @@ class Game
 	end
 
 	def ask_user_choice
+		board.show
 		from = ""
 		to = ""
 		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
@@ -36,6 +38,57 @@ class Game
 		@current = @current.color == "White" ? @black : @white
 	end
 
+	def turn
+		while true
+			from, to = ask_user_choice
+			break if determine_move(from, to)
+			puts "You can't do that."
+		end
+	end
+
+	def play
+		while true
+			board.show
+			turn
+			swap
+		end
+	end
+
+	def color_ok?(from)
+		square = board.grid[from[0]][from[1]]
+		(square != " " && square.color == @current.color) ? true : false
+	end
+
+	def determine_move(from, to)
+		piece = board.grid[from[0]][from[1]]
+		target = board.grid[to[0]][to[1]]
+		
+		row = (from[0] - to[0]).abs
+		col = (from[1] - to[1]).abs
+		case true
+		when piece.class == King && row == 2
+			castle(from, to) if can_castle?(from, to)
+		when piece.class == Pawn 
+			if (row == 1 && col == 1 && target != " ") || (board.allowed?(from, to) && target == " ")
+				promotion?(from, to) ? board.promote(from, to) : board.update_piece(from, to)
+			elsif row == 1 && col == 1 && target == " " && can_passant?(to, piece)
+				en_passant(from, to, piece)
+			end
+		when board.allowed?(from, to) && color_ok?(from)
+			board.update_piece(from, to)
+		else
+			false
+		end
+	end
+
+	def under_attack?(spot)
+		board.grid.any? do |row|
+			row.any? do |piece|
+				board.allowed?([piece.rank, piece.file], spot) if piece.class != String && piece.color != current.color
+			end
+		end
+	end
+
 	def locate_king
 		king = board.grid.flatten.find do |square| 
 			square.class == King && square.color == current.color 
@@ -45,14 +98,6 @@ class Game
 
 	def check?
 		under_attack?(locate_king)
-	end
-
-	def under_attack?(spot)
-		board.grid.any? do |row|
-			row.any? do |piece|
-				board.allowed?([piece.rank, piece.file], spot) if piece.class != String && piece.color != current.color
-			end
-		end
 	end
 
 	def can_castle?(from, to)
@@ -73,46 +118,21 @@ class Game
 		board.update_piece(corner, inward)
 	end
 
-	def color_ok?(from)
-		@board.grid[from[0]][from[1]].color == @current.color ? true : false
+	def promotion?(from, to)
+		pawn = board.grid[from[0]][from[1]]
+		return false unless pawn.class == Pawn
+		return true if pawn.color == "White" && to[0] == 0
+		return true if pawn.color == "Black" && to[0] == 7
 	end
 
-	def turn
-		while true
-			board.show
-			from, to = ask_user_choice
-			if board.allowed?(from, to) && color_ok?(from)
-				determine_move(from, to)
-				break
-			else
-				board.show
-				puts "You can't do that."
-			end
-		end
+	def can_passant?(to, piece)
+		passant = (piece.color == "White") ? board.grid[to[0]+1][to[1]] : board.grid[to[0]-1][to[1]]
+		passant != " " && (passant.color != piece.color) ? true : false
 	end
 
-	def play
-		while true
-			board.show
-			turn
-			swap
-		end
+	def en_passant(from, to, piece)
+		board.update_piece(from, to)
+		piece.color == "White" ? (erase = [(to[0]+1),to[1]]) : (erase = [(to[0]-1), to[1]])
+		board.grid[erase[0]][erase[1]] = " "
 	end
-
-	def determine_move(from, to)
-		piece = board.grid[from[0]][from[1]]
-		if piece.class == King && ((from[1]-to[1])**2) == 4
-			castle(from, to) if can_castle?(from, to)
-		elsif piece.class == Pawn 
-		# 	en_passant
-		# 	promotion
-		# 	pawn_attack
-			board.update_piece(from, to)
-		else
-			board.update_piece(from, to)
-		end
-	end
-
-
-
 end

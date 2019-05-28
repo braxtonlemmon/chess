@@ -3,7 +3,7 @@ require "./lib/pieces/pieces.rb"
 class Rook < Pieces::Piece
 	attr_accessor :traveled
 	
-	def initialize(rank, file)
+	def initialize(rank, file, color=nil)
 		super
 		@traveled = false
 		@symbol = @color == "White" ? "\u265C".encode('utf-8') : "\u2656".encode('utf-8')
