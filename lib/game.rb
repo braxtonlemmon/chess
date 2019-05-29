@@ -2,7 +2,7 @@ require "./lib/board.rb"
 require "./lib/player.rb"
 
 class Game
-	attr_reader :white, :black, :current, :board
+	attr_reader :white, :black, :current, :board, :last
 
 	def initialize
 		
@@ -41,7 +41,10 @@ class Game
 	def turn
 		while true
 			from, to = ask_user_choice
-			break if determine_move(from, to)
+			if determine_move(from, to)
+				@last = [from, to]
+				break
+			end
 			puts "You can't do that."
 		end
 	end
@@ -71,7 +74,7 @@ class Game
 		when piece.class == Pawn 
 			if (row == 1 && col == 1 && target != " ") || (board.allowed?(from, to) && target == " ")
 				promotion?(from, to) ? board.promote(from, to) : board.update_piece(from, to)
-			elsif row == 1 && col == 1 && target == " " && can_passant?(to, piece)
+			elsif row == 1 && col == 1 && target == " " && can_passant?(piece, to)
 				board.en_passant(from, to, piece)
 			end
 		when board.allowed?(from, to) && color_ok?(from)
@@ -118,7 +121,8 @@ class Game
 		return true if pawn.color == "Black" && to[0] == 7
 	end
 
-	def can_passant?(to, piece)
+	def can_passant?(piece, to)
+		return false unless @last[0] == [to[0]-1, to[1]]
 		passant = (piece.color == "White") ? board.grid[to[0]+1][to[1]] : board.grid[to[0]-1][to[1]]
 		passant != " " && (passant.color != piece.color) ? true : false
 	end
@@ -145,8 +149,8 @@ class Game
 		elsif piece.class == Pawn
 			[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
 				moves << [rank+to[0], file+to[1]] if can_attack?(piece, [rank+to[0], file+to[1]])
+				moves << [rank+to[0], file+to[1]] if can_passant?(piece, [rank+to[0], file+to[1]])
 			end
-			# add en_passant moves
 		end
 		moves 
 	end
