@@ -123,6 +123,15 @@ class Game
 		passant != " " && (passant.color != piece.color) ? true : false
 	end
 
+	def can_attack?(piece, to)
+		if piece.color == "White" && piece.rank - to[0] == 1 
+			return true if (piece.file - to[1]).abs == 1 && !board.spot_empty?(to[0], to[1])
+		elsif piece.color == "Black" && piece.rank - to[0] == -1
+			return true if (piece.file - to[1]).abs == 1 && !board.spot_empty?(to[0], to[1])
+		end
+		false
+	end
+
 	# This method will take as an argument a PIECE
 		# It will first retrieve the array of regular moves from piece#search
 		# It will then pare down that array to only the moves that are legal using #allowed?
@@ -133,6 +142,11 @@ class Game
 		moves = piece.search.select { |to| to if board.allowed?([rank, file], to) }
 		if piece.class == King
 			[-2, 2].each { |i| moves << [rank, file+i] if can_castle?([rank, file], [rank, file+i]) }
+		elsif piece.class == Pawn
+			[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
+				moves << [rank+to[0], file+to[1]] if can_attack?(piece, [rank+to[0], file+to[1]])
+			end
+			# add en_passant moves
 		end
 		moves 
 	end
