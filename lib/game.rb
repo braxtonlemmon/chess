@@ -10,6 +10,7 @@ class Game
 		@black = Player.new("Black")
 		@current = @white
 		@board = Board.new
+		@last = [[0,0], [0,0]]
 	end
 
 	def ask_user_choice
@@ -136,13 +137,8 @@ class Game
 		false
 	end
 
-	# This method will take as an argument a PIECE
-		# It will first retrieve the array of regular moves from piece#search
-		# It will then pare down that array to only the moves that are legal using #allowed?
-	# It will then use methods to add special moves for King and Pawn
-	# It will return an array of all the squares the piece can legally move to
-	def legal_moves(piece)
-		rank, file = [piece.rank, piece.file]
+	def legal_moves(rank, file)
+		piece = board.grid[rank][file]
 		moves = piece.search.select { |to| to if board.allowed?([rank, file], to) }
 		if piece.class == King
 			[-2, 2].each { |i| moves << [rank, file+i] if can_castle?([rank, file], [rank, file+i]) }
