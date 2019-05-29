@@ -42,7 +42,8 @@ class Game
 	def turn
 		while true
 			from, to = ask_user_choice
-			if determine_move(from, to)
+			if color_ok?(from) && legal_moves(from[0],from[1]).include?(to)
+				move(from, to)
 				@last = [from, to]
 				break
 			end
@@ -63,25 +64,35 @@ class Game
 		(square != " " && square.color == @current.color) ? true : false
 	end
 
-	def determine_move(from, to)
-		piece = board.grid[from[0]][from[1]]
-		target = board.grid[to[0]][to[1]]
-		
-		row = (from[0] - to[0]).abs
-		col = (from[1] - to[1]).abs
-		case true
-		when piece.class == King && col == 2
-			board.castle(from, to) if can_castle?(from, to)
-		when piece.class == Pawn 
-			if (row == 1 && col == 1 && target != " ") || (board.allowed?(from, to) && target == " ")
-				promotion?(from, to) ? board.promote(from, to) : board.update_piece(from, to)
-			elsif row == 1 && col == 1 && target == " " && can_passant?(piece, to)
-				board.en_passant(from, to, piece)
+	def legal_moves(rank, file)
+		piece = board.grid[rank][file]
+		moves = piece.search.select { |to| to if board.allowed?([rank, file], to) }
+		if piece.class == King
+			[-2, 2].each { |i| moves << [rank, file+i] if can_castle?([rank, file], [rank, file+i]) }
+		elsif piece.class == Pawn
+			moves.delete_if { |move| !board.spot_empty?(move[0], move[1]) }
+			[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
+				moves << [rank+to[0], file+to[1]] if can_attack?(piece, [rank+to[0], file+to[1]])
+				moves << [rank+to[0], file+to[1]] if can_passant?(piece, [rank+to[0], file+to[1]])
 			end
-		when board.allowed?(from, to) && color_ok?(from)
-			board.update_piece(from, to)
+		end
+		moves 
+	end
+
+	def move(from, to)
+		piece = board.grid[from[0]][from[1]]
+		if piece.class == King
+			(from[1] - to[1]).abs == 2 ? board.castle(from, to) : board.update_piece(from, to)
+		elsif piece.class == Pawn
+			if can_passant?(piece, to)
+				board.en_passant(from, to, piece)
+			elsif promotion?(from, to)
+				board.promote(from, to)
+			else 
+				board.update_piece(from, to)
+			end
 		else
-			false
+			board.update_piece(from, to)
 		end
 	end
 
@@ -136,20 +147,5 @@ class Game
 		end
 		false
 	end
-
-	def legal_moves(rank, file)
-		piece = board.grid[rank][file]
-		moves = piece.search.select { |to| to if board.allowed?([rank, file], to) }
-		if piece.class == King
-			[-2, 2].each { |i| moves << [rank, file+i] if can_castle?([rank, file], [rank, file+i]) }
-		elsif piece.class == Pawn
-			[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
-				moves << [rank+to[0], file+to[1]] if can_attack?(piece, [rank+to[0], file+to[1]])
-				moves << [rank+to[0], file+to[1]] if can_passant?(piece, [rank+to[0], file+to[1]])
-			end
-		end
-		moves 
-	end
-
 end
 
