@@ -2,7 +2,7 @@ require "./lib/board.rb"
 require "./lib/player.rb"
 
 class Game
-	attr_reader :white, :black, :current, :board, :last
+	attr_reader :white, :black, :current, :board, :last, :copy
 
 	def initialize
 		
@@ -76,7 +76,7 @@ class Game
 				moves << [rank+to[0], file+to[1]] if can_passant?(piece, [rank+to[0], file+to[1]])
 			end
 		end
-		moves 
+		moves.delete_if { |move| check?([rank,file], move) } 
 	end
 
 	def move(from, to)
@@ -97,21 +97,23 @@ class Game
 	end
 
 	def under_attack?(spot)
-		board.grid.any? do |row|
+		@copy.grid.any? do |row|
 			row.any? do |piece|
-				board.allowed?([piece.rank, piece.file], spot) if piece.class != String && piece.color != current.color
+				@copy.allowed?([piece.rank, piece.file], spot) if piece.class != String && piece.color != current.color
 			end
 		end
 	end
 
 	def locate_king
-		king = board.grid.flatten.find do |square| 
+		king = @copy.grid.flatten.find do |square| 
 			square.class == King && square.color == current.color 
 		end
 		[king.rank, king.file]
 	end
 
-	def check?
+	def check?(from, to)
+		@copy = Marshal.load(Marshal.dump(@board))
+		@copy.update_piece(from, to)
 		under_attack?(locate_king)
 	end
 
