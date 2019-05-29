@@ -98,7 +98,6 @@ class Board
 		end
 		grid[to[0]][to[1]] = pieces[piece]
 		grid[from[0]][from[1]] = " "
-	
 	end
 
 	def allowed?(from, to)
