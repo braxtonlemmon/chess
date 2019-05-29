@@ -66,13 +66,13 @@ class Game
 		row = (from[0] - to[0]).abs
 		col = (from[1] - to[1]).abs
 		case true
-		when piece.class == King && row == 2
-			castle(from, to) if can_castle?(from, to)
+		when piece.class == King && col == 2
+			board.castle(from, to) if can_castle?(from, to)
 		when piece.class == Pawn 
 			if (row == 1 && col == 1 && target != " ") || (board.allowed?(from, to) && target == " ")
 				promotion?(from, to) ? board.promote(from, to) : board.update_piece(from, to)
 			elsif row == 1 && col == 1 && target == " " && can_passant?(to, piece)
-				en_passant(from, to, piece)
+				board.en_passant(from, to, piece)
 			end
 		when board.allowed?(from, to) && color_ok?(from)
 			board.update_piece(from, to)
@@ -111,13 +111,6 @@ class Game
 		true
 	end
 
-	def castle(from, to)
-		corner = to[1] == 6 ? [to[0], 7] : [to[0], 0]
-		inward = to[1] == 6 ? [to[0], 5] : [to[0], 3]
-		board.update_piece(from, to)
-		board.update_piece(corner, inward)
-	end
-
 	def promotion?(from, to)
 		pawn = board.grid[from[0]][from[1]]
 		return false unless pawn.class == Pawn
@@ -130,9 +123,4 @@ class Game
 		passant != " " && (passant.color != piece.color) ? true : false
 	end
 
-	def en_passant(from, to, piece)
-		board.update_piece(from, to)
-		piece.color == "White" ? (erase = [(to[0]+1),to[1]]) : (erase = [(to[0]-1), to[1]])
-		board.grid[erase[0]][erase[1]] = " "
-	end
 end

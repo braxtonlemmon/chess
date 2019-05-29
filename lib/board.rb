@@ -69,6 +69,19 @@ class Board
 		grid[from[0]][from[1]] = " "
 	end
 
+	def castle(from, to)
+		corner = to[1] == 6 ? [to[0], 7] : [to[0], 0]
+		inward = to[1] == 6 ? [to[0], 5] : [to[0], 3]
+		update_piece(from, to)
+		update_piece(corner, inward)
+	end
+
+	def en_passant(from, to, piece)
+		update_piece(from, to)
+		piece.color == "White" ? (erase = [(to[0]+1),to[1]]) : (erase = [(to[0]-1), to[1]])
+		grid[erase[0]][erase[1]] = " "
+	end
+
 	def promote(from, to)
 		color = grid[from[0]][from[1]].color
 		pieces = {
