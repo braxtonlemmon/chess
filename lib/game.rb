@@ -42,7 +42,7 @@ class Game
 	def turn
 		while true
 			from, to = ask_user_choice
-			if color_ok?(from) && legal_moves(from[0],from[1]).include?(to)
+			if color_ok?(from) && legal_moves(from[0],from[1]).include?(to) # && !check?(from, to)
 				move(from, to)
 				@last = [from, to]
 				break
@@ -64,21 +64,7 @@ class Game
 		(square != " " && square.color == @current.color) ? true : false
 	end
 
-	# def legal_moves(rank, file)
-	# 	piece = board.grid[rank][file]
-	# 	moves = piece.search.select { |to| to if board.allowed?([rank, file], to) }
-	# 	if piece.class == King
-	# 		[-2, 2].each { |i| moves << [rank, file+i] if can_castle?([rank, file], [rank, file+i]) }
-	# 	elsif piece.class == Pawn
-	# 		moves.delete_if { |move| !board.spot_empty?(move[0], move[1]) }
-	# 		[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
-	# 			moves << [rank+to[0], file+to[1]] if can_attack?(piece, [rank+to[0], file+to[1]])
-	# 			moves << [rank+to[0], file+to[1]] if can_passant?(piece, [rank+to[0], file+to[1]])
-	# 		end
-	# 	end
-	# 	moves.delete_if { |move| check?([rank,file], move) } 
-	# end
-
+	# returns array of current legal moves piece can make on @board
 	def legal_moves(rank, file)
 		piece = board.grid[rank][file]
 		piece.plays = piece.search.select { |to| board.allowed?([rank, file], to) }
@@ -94,12 +80,7 @@ class Game
 		piece.plays
 		# piece.plays.delete_if { |move| check?([rank,file], move) } 
 	end
-#################################################################################################################
-# I'm stuck because #allowed needs to include a piece's legal moves, but I use #allowed IN #legal_moves         #
-# I have to seperate the two so they mesh                                                                       #
-# Maybe I need a new method for filtering normal moves on board --> then allowed can be used for all moves?     #
-# So tomorrow tackle #legal_moves, #check, #under_attack, and #allowed                                          #
-#################################################################################################################
+
 	def move(from, to)
 		piece = board.grid[from[0]][from[1]]
 		if piece.class == King
@@ -116,21 +97,17 @@ class Game
 			board.update_piece(from, to)
 		end
 	end
-
-	# def under_attack?(spot)
-	# 	@copy.grid.flatten.any? do |square|
-	# 		@copy.allowed?([square.rank, square.file], spot) if square.class != String && square.color != current.color
-	# 	end
-	# end
 	
+	# Goes through every piece and returns true if piece can attack king
 	def under_attack?(spot)
 		@copy.grid.any? do |row|
 			row.any? do |piece|
-				@copy.allowed?([piece.rank, piece.file], spot) if piece.class != String && piece.color != current.color
+				if piece.class != String
+					legal_moves(piece.rank, piece.file).include?(spot)
+				end
 			end
 		end
 	end
-
 
 	def locate_king
 		king = @copy.grid.flatten.find do |square| 
