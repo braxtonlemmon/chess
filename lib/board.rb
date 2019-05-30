@@ -100,10 +100,15 @@ class Board
 		grid[from[0]][from[1]] = " "
 	end
 
+	# def allowed?(from, to)
+	# 	return false if spot_empty?(from[0], from[1])
+	# 	moves = grid[from[0]][from[1]].search
+	# 	return true if moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
+	# 	false
+	# end
+
 	def allowed?(from, to)
-		return false if spot_empty?(from[0], from[1])
-		moves = grid[from[0]][from[1]].search
-		return true if moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
+		return true if path_clear?(from, to) && spot_available?(from, to)
 		false
 	end
 	
