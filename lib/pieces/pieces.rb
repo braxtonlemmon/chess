@@ -1,11 +1,12 @@
 module Pieces
 	class Piece
-		attr_accessor :color, :rank, :file, :moves, :symbol
+		attr_accessor :color, :rank, :file, :moves, :symbol, :plays
 
 		def initialize(rank, file, color=nil)
 			@rank = rank
 			@file = file
 			@color = color == nil ? define_color : color
+			@plays = []
 		end
 
 		def define_color
