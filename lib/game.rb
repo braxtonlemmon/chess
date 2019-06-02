@@ -81,25 +81,6 @@ class Game
 		end
 	end
 	
-	# Goes through every piece and returns true if piece can attack king
-	# def under_attack?(spot)
-	# 	@board.grid.any? do |row|
-	# 		row.any? do |piece|
-	# 			if piece.class != String
-	# 				moves = piece.possible_moves(@board)
-	# 				moves.include?(spot) unless moves.nil?
-	# 			end
-	# 		end
-	# 	end
-	# end
-
-	# def locate_king
-	# 	king = board.grid.flatten.find do |square| 
-	# 		square.class == King && square.color == current.color 
-	# 	end
-	# 	[king.rank, king.file]
-	# end
-
 	def copy_board
 		@copy = Marshal.load(Marshal.dump(@board))
 	end
