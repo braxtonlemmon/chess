@@ -2,7 +2,7 @@ require "./lib/board.rb"
 require "./lib/player.rb"
 
 class Game
-	attr_reader :white, :black, :current, :board, :last, :copy
+	attr_reader :white, :black, :current, :board, :copy
 
 	def initialize
 		
@@ -10,7 +10,6 @@ class Game
 		@black = Player.new("Black")
 		@current = @white
 		@board = Board.new
-		@last = [[0,0], [0,0]]
 	end
 
 	def ask_user_choice
@@ -42,9 +41,10 @@ class Game
 	def turn
 		while true
 			from, to = ask_user_choice
-			if color_ok?(from) && legal_moves(from[0],from[1]).include?(to) # && !check?(from, to)
+			piece = board.locate(from)
+			if color_ok?(from) && piece.possible_moves(board).include?(to) # && !check?(from, to)
 				move(from, to)
-				@last = [from, to]
+				@board.last = [from, to]
 				break
 			end
 			puts "You can't do that."
@@ -64,29 +64,12 @@ class Game
 		(square != " " && square.color == @current.color) ? true : false
 	end
 
-	# returns array of current legal moves piece can make on @board
-	def legal_moves(rank, file)
-		piece = board.grid[rank][file]
-		piece.plays = piece.search.select { |to| board.allowed?([rank, file], to) }
-		if piece.class == King
-			[-2, 2].each { |i| piece.plays << [rank, file+i] if can_castle?([rank, file], [rank, file+i]) }
-		elsif piece.class == Pawn
-			piece.plays.delete_if { |move| !board.spot_empty?(move[0], move[1]) }
-			[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
-				piece.plays << [rank+to[0], file+to[1]] if can_attack?(piece, [rank+to[0], file+to[1]])
-				piece.plays << [rank+to[0], file+to[1]] if can_passant?(piece, [rank+to[0], file+to[1]])
-			end
-		end
-		piece.plays
-		# piece.plays.delete_if { |move| check?([rank,file], move) } 
-	end
-
 	def move(from, to)
-		piece = board.grid[from[0]][from[1]]
+		piece = board.locate(from)
 		if piece.class == King
 			(from[1] - to[1]).abs == 2 ? board.castle(from, to) : board.update_piece(from, to)
 		elsif piece.class == Pawn
-			if can_passant?(piece, to)
+			if piece.can_passant?(to, @board)
 				board.en_passant(from, to, piece)
 			elsif promotion?(from, to)
 				board.promote(from, to)
@@ -99,42 +82,36 @@ class Game
 	end
 	
 	# Goes through every piece and returns true if piece can attack king
-	def under_attack?(spot)
-		@copy.grid.any? do |row|
-			row.any? do |piece|
-				if piece.class != String
-					legal_moves(piece.rank, piece.file).include?(spot)
-				end
-			end
-		end
-	end
+	# def under_attack?(spot)
+	# 	@board.grid.any? do |row|
+	# 		row.any? do |piece|
+	# 			if piece.class != String
+	# 				moves = piece.possible_moves(@board)
+	# 				moves.include?(spot) unless moves.nil?
+	# 			end
+	# 		end
+	# 	end
+	# end
 
-	def locate_king
-		king = @copy.grid.flatten.find do |square| 
-			square.class == King && square.color == current.color 
-		end
-		[king.rank, king.file]
-	end
+	# def locate_king
+	# 	king = board.grid.flatten.find do |square| 
+	# 		square.class == King && square.color == current.color 
+	# 	end
+	# 	[king.rank, king.file]
+	# end
 
 	def copy_board
 		@copy = Marshal.load(Marshal.dump(@board))
 	end
 
-	def check?(from, to)
-		@copy = Marshal.load(Marshal.dump(@board))
-		@copy.update_piece(from, to)
-		under_attack?(locate_king)
-	end
+	# def check?(from, to)
+	# 	@copy = Marshal.load(Marshal.dump(@board))
+	# 	@copy.update_piece(from, to)
+	# 	under_attack?(locate_king)
+	# end
 
-	def can_castle?(from, to)
-		files  = to[1] == 6 ? (4..7)     : (0..4)
-		corner = to[1] == 6 ? [to[0], 7] : [to[0], 0]	
-		king = board.grid[from[0]][from[1]]
-		rook = board.grid[corner[0]][corner[1]]
-		return false if king.traveled || rook.traveled
-		return false unless board.path_clear?(from, corner)
-		return false if files.any? { |file| under_attack?([from[0], file]) }
-		true
+	def check?
+		board.under_attack?(board.locate_king)
 	end
 
 	def promotion?(from, to)
@@ -142,21 +119,6 @@ class Game
 		return false unless pawn.class == Pawn
 		return true if pawn.color == "White" && to[0] == 0
 		return true if pawn.color == "Black" && to[0] == 7
-	end
-
-	def can_passant?(piece, to)
-		return false unless @last[0] == [to[0]-1, to[1]]
-		passant = (piece.color == "White") ? board.grid[to[0]+1][to[1]] : board.grid[to[0]-1][to[1]]
-		passant != " " && (passant.color != piece.color) ? true : false
-	end
-
-	def can_attack?(piece, to)
-		if piece.color == "White" && piece.rank - to[0] == 1 
-			return true if (piece.file - to[1]).abs == 1 && !board.spot_empty?(to[0], to[1])
-		elsif piece.color == "Black" && piece.rank - to[0] == -1
-			return true if (piece.file - to[1]).abs == 1 && !board.spot_empty?(to[0], to[1])
-		end
-		false
 	end
 end
 

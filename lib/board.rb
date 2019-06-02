@@ -7,13 +7,18 @@ require "./lib/pieces/pawn.rb"
 
 
 class Board
-	attr_accessor :grid, :from, :to
+	attr_accessor :grid, :from, :to, :last
 
 	def initialize
 		@grid = Array.new(8) { Array.new(8) { " " } }
 		@from = Array.new(2)
 		@to = Array.new(2)
+		@last = [[0,0], [0,0]]
 		set
+	end
+
+	def locate(coordinates)
+		@grid[coordinates[0]][coordinates[1]]
 	end
 
 	def set
@@ -100,13 +105,6 @@ class Board
 		grid[from[0]][from[1]] = " "
 	end
 
-	# def allowed?(from, to)
-	# 	return false if spot_empty?(from[0], from[1])
-	# 	moves = grid[from[0]][from[1]].search
-	# 	return true if moves.include?(to) && path_clear?(from, to) && spot_available?(from, to)
-	# 	false
-	# end
-
 	def allowed?(from, to)
 		return true if path_clear?(from, to) && spot_available?(from, to)
 		false
@@ -164,8 +162,20 @@ class Board
 		false
 	end
 
-	
+	def locate_king
+		king = grid.flatten.find do |square| 
+			square.class == King && square.color == current.color 
+		end
+		[king.rank, king.file]
+	end
 
-	
-
+	def under_attack?(spot)
+		grid.any? do |row|
+			row.any? do |piece|
+				if piece.class != String 
+					piece.plays.include?(spot) unless piece.plays.nil?
+				end
+			end
+		end
+	end
 end
