@@ -22,9 +22,9 @@ class King < Piece
 		files  = to[1] == 6 ? (4..7)     : (0..4)
 		corner = to[1] == 6 ? [to[0], 7] : [to[0], 0]	
 		rook = board.grid[corner[0]][corner[1]]
+		return false unless rook.class == Rook
 		return false if @traveled || rook.traveled
 		return false unless board.path_clear?([rank,file], corner)
-		# return false if files.any? { |n| board.under_attack?([rank, n]) }
 		true
 	end
 end
