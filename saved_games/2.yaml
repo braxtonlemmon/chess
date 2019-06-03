@@ -1,7 +1,7 @@
 ---
-:white: &1 !ruby/object:Player
+:white: !ruby/object:Player
   color: White
-:black: !ruby/object:Player
+:black: &1 !ruby/object:Player
   color: Black
 :current: *1
 :board: !ruby/object:Board
@@ -482,53 +482,49 @@
       file: 6
       color: Black
       symbol: "♙"
-    - " "
-  - - " "
-    - " "
-    - " "
-    - " "
-    - " "
-    - " "
-    - " "
-    - " "
-  - - " "
-    - " "
-    - " "
-    - " "
-    - " "
-    - " "
-    - " "
     - !ruby/object:Pawn
-      rank: 3
+      rank: 1
       file: 7
       color: Black
       symbol: "♙"
-      moves:
-      - - 1
-        - 0
-      - - 2
-        - 0
-      plays:
-      - - 2
-        - 7
-      - - 3
-        - 7
   - - " "
     - " "
     - " "
     - " "
     - " "
+    - " "
+    - " "
+    - " "
+  - - " "
+    - " "
+    - " "
+    - " "
+    - " "
+    - " "
+    - " "
+    - " "
+  - - " "
     - " "
     - " "
     - !ruby/object:Pawn
       rank: 4
-      file: 7
+      file: 3
       color: White
       symbol: "♟"
       moves:
       - - -1
         - 0
-      plays: []
+      - - -2
+        - 0
+      plays:
+      - - 5
+        - 3
+      - - 4
+        - 3
+    - " "
+    - " "
+    - " "
+    - " "
   - - " "
     - " "
     - " "
@@ -562,11 +558,7 @@
       file: 2
       color: White
       symbol: "♟"
-    - !ruby/object:Pawn
-      rank: 6
-      file: 3
-      color: White
-      symbol: "♟"
+    - " "
     - !ruby/object:Pawn
       rank: 6
       file: 4
@@ -582,7 +574,11 @@
       file: 6
       color: White
       symbol: "♟"
-    - " "
+    - !ruby/object:Pawn
+      rank: 6
+      file: 7
+      color: White
+      symbol: "♟"
   - - !ruby/object:Rook
       rank: 7
       file: 0
@@ -1025,8 +1021,8 @@
   - 
   - 
   last:
-  - - 1
-    - 7
-  - - 3
-    - 7
+  - - 6
+    - 3
+  - - 4
+    - 3
 :filename: '2'

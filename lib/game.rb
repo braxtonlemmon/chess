@@ -26,12 +26,12 @@ class Game
 		from = ""
 		to = ""
 
-		puts "Save game and exit?"
-		save_game if gets.chomp.downcase[0] == "y"
-
 		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
-			puts "#{current.color}, enter coordinates of piece to move: "
+			puts "Enter 's' to save and quit. Enter 'x' to quit without saving."
+			puts "#{current.color}, enter coordinates of piece to move:"
 			from = gets.chomp
+			save_game if from.downcase[0] == "s"
+			exit if from.downcase[0] == "x"
 		end
 		until (to[0] =~ /[a-h]/) && (to[1] =~ /[1-8]/) && to.length == 2
 			puts "Enter coordinates of where to move #{from}: "
@@ -66,10 +66,10 @@ class Game
 
 	def play
 		until checkmate?
-			board.show
 			turn
 			swap
 		end
+		board.show
 		game_over
 	end
 
@@ -121,7 +121,8 @@ class Game
 	end
 
 	def game_over
-		puts "Checkmate! Game is over!"
+		swap
+		puts "Checkmate! #{current.color} wins!"
 	end
 
 	def select_file
@@ -134,9 +135,7 @@ class Game
 
 	def save_game
 		Dir.mkdir("saved_games") unless Dir.exists? "saved_games"
-		if filename.nil?
-			select_file
-		end
+		select_file if filename.nil?
 
 		File.open("saved_games/#{filename}.yaml", "w") do |file|
 			save = YAML::dump({
@@ -156,7 +155,6 @@ class Game
 
 	def load_game
 		select_file
-
 		if File.exist? "saved_games/#{filename}.yaml"
 			saved_info = YAML::load File.read("saved_games/#{filename}.yaml")
 			@white = saved_info[:white]
