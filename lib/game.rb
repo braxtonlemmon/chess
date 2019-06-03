@@ -52,11 +52,12 @@ class Game
 	end
 
 	def play
-		while true
+		until checkmate?
 			board.show
 			turn
 			swap
 		end
+		game_over
 	end
 
 	def color_ok?(from)
@@ -80,10 +81,6 @@ class Game
 			board.update_piece(from, to)
 		end
 	end
-	
-	def copy_board
-		@copy = Marshal.load(Marshal.dump(@board))
-	end
 
 	def check?(from, to)
 		copy = Marshal.load(Marshal.dump(@board))
@@ -91,11 +88,27 @@ class Game
 		copy.under_attack?(copy.locate_king(current.color))
 	end
 
+	def checkmate?
+		pieces = board.grid.flatten.select do |square|
+			square.class != String && square.color == current.color
+		end.each do |piece|
+			moves = piece.possible_moves(@board)
+			moves.each do |move|
+				return false unless check?([piece.rank, piece.file], move)
+			end
+		end
+		true
+	end
+
 	def promotion?(from, to)
 		pawn = board.grid[from[0]][from[1]]
 		return false unless pawn.class == Pawn
 		return true if pawn.color == "White" && to[0] == 0
 		return true if pawn.color == "Black" && to[0] == 7
+	end
+
+	def game_over
+		puts "Checkmate! Game is over!"
 	end
 end
 
