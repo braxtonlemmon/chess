@@ -1,21 +1,34 @@
+#!/home/braxton/.rbenv/shims/ruby
+
 require "./lib/board.rb"
 require "./lib/player.rb"
+require "yaml"
 
 class Game
-	attr_reader :white, :black, :current, :board
+	attr_reader :white, :black, :current, :board, :filename
 
 	def initialize
-		
+		@filename = nil
 		@white = Player.new("White")
 		@black = Player.new("Black")
 		@current = @white
 		@board = Board.new
 	end
 
+	def setup
+		puts "Welcome to Chess! Load a saved game?"
+		load_game if gets.chomp.downcase[0] == 'y'
+		play
+	end
+
 	def ask_user_choice
 		board.show
 		from = ""
 		to = ""
+
+		puts "Save game and exit?"
+		save_game if gets.chomp.downcase[0] == "y"
+
 		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
 			puts "#{current.color}, enter coordinates of piece to move: "
 			from = gets.chomp
@@ -110,5 +123,54 @@ class Game
 	def game_over
 		puts "Checkmate! Game is over!"
 	end
+
+	def select_file
+		while true
+			puts "Please select a game file: (1) (2) (3)"
+			@filename = gets.chomp
+			break if filename.match?(/[123]/)
+		end
+	end
+
+	def save_game
+		Dir.mkdir("saved_games") unless Dir.exists? "saved_games"
+		if filename.nil?
+			select_file
+		end
+
+		File.open("saved_games/#{filename}.yaml", "w") do |file|
+			save = YAML::dump({
+				white: @white,
+				black: @black,
+				current: @current,
+				board: @board,
+				filename: @filename
+			})
+			file.puts save
+		end
+
+		puts "Saving..."
+		sleep(2)
+		exit 
+	end
+
+	def load_game
+		select_file
+
+		if File.exist? "saved_games/#{filename}.yaml"
+			saved_info = YAML::load File.read("saved_games/#{filename}.yaml")
+			@white = saved_info[:white]
+			@black = saved_info[:black]
+			@current = saved_info[:current]
+			@board = saved_info[:board]
+			@filename = saved_info[:filename]
+			puts "Loading game..."
+		else
+			puts "Sorry, that file does not contain a saved game. Starting new game..."
+		end
+		sleep(3)
+	end
 end
 
+game = Game.new
+game.setup
