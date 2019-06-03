@@ -23,7 +23,7 @@ class Pawn < Piece
 		@plays.delete_if { |ahead| !board.spot_empty?(ahead[0], ahead[1]) }
 		[[-1,-1], [-1,1], [1,1], [1,-1]].each do |to|
 			move = [rank + to[0], file + to[1]]
-			@plays << move if can_attack?(move, board)
+			@plays << move if on_board?(to) && can_attack?(move, board)
 			@plays << move if on_board?(to) && can_passant?(move, board)
 		end
 		@plays
