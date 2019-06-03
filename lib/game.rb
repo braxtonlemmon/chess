@@ -2,7 +2,7 @@ require "./lib/board.rb"
 require "./lib/player.rb"
 
 class Game
-	attr_reader :white, :black, :current, :board, :copy
+	attr_reader :white, :black, :current, :board
 
 	def initialize
 		
@@ -42,7 +42,7 @@ class Game
 		while true
 			from, to = ask_user_choice
 			piece = board.locate(from)
-			if color_ok?(from) && piece.possible_moves(board).include?(to) # && !check?(from, to)
+			if color_ok?(from) && piece.possible_moves(board).include?(to) && !check?(from, to)
 				move(from, to)
 				@board.last = [from, to]
 				break
@@ -85,14 +85,10 @@ class Game
 		@copy = Marshal.load(Marshal.dump(@board))
 	end
 
-	# def check?(from, to)
-	# 	@copy = Marshal.load(Marshal.dump(@board))
-	# 	@copy.update_piece(from, to)
-	# 	under_attack?(locate_king)
-	# end
-
-	def check?
-		board.under_attack?(board.locate_king)
+	def check?(from, to)
+		copy = Marshal.load(Marshal.dump(@board))
+		copy.update_piece(from, to)
+		copy.under_attack?(copy.locate_king(current.color))
 	end
 
 	def promotion?(from, to)

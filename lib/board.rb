@@ -162,18 +162,19 @@ class Board
 		false
 	end
 
-	def locate_king
+	def locate_king(color)
 		king = grid.flatten.find do |square| 
-			square.class == King && square.color == current.color 
+			square.class == King && square.color == color 
 		end
 		[king.rank, king.file]
 	end
 
 	def under_attack?(spot)
 		grid.any? do |row|
-			row.any? do |piece|
-				if piece.class != String 
-					piece.plays.include?(spot) unless piece.plays.nil?
+			row.any? do |square|
+				if square.class != String
+					square.possible_moves(self) 
+					square.plays.include?(spot) 
 				end
 			end
 		end
