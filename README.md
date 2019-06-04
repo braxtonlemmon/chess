@@ -19,5 +19,5 @@ Project: Ruby Final Project from The Odin Project [curriculum](https://www.theod
 
 ## To run
 * Download chess repository to your local machine
-* Navigate to the repository and run ruby ./lib/game.rb
+* Navigate to the repository and run [ruby ./lib/game.rb]
 
