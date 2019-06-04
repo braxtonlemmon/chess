@@ -21,13 +21,15 @@ class Game
 		play
 	end
 
+	private
+
 	def ask_user_choice
 		board.show
 		from = ""
 		to = ""
 
 		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
-			puts "Enter 's' to save and quit. Enter 'x' to quit without saving."
+			puts "   [s]...save and quit        [x]...quit without saving"
 			puts "#{current.color}, enter coordinates of piece to move:"
 			from = gets.chomp
 			save_game if from.downcase[0] == "s"
@@ -39,16 +41,10 @@ class Game
 		end
 		[convert(from), convert(to)]
 	end
-		
-	def convert(spot)
-		spot = spot.split("")
-		char = { "a" => 0, "b" => 1, "c" => 2, "d" => 3, "e" => 4, "f" => 5, "g" => 6,	"h" => 7, 
-						 "8" => 0, "7" => 1, "6" => 2, "5" => 3, "4" => 4, "3" => 5, "2" => 6,	"1" => 7 }
-		[char[spot[1]], char[spot[0]]]
-	end
 
-	def swap
-		@current = @current.color == "White" ? @black : @white
+	def color_ok?(from)
+		square = board.grid[from[0]][from[1]]
+		(square != " " && square.color == @current.color) ? true : false
 	end
 
 	def turn
@@ -75,11 +71,6 @@ class Game
 		game_over
 	end
 
-	def color_ok?(from)
-		square = board.grid[from[0]][from[1]]
-		(square != " " && square.color == @current.color) ? true : false
-	end
-
 	def move(from, to)
 		piece = board.locate(from)
 		if piece.class == King
@@ -95,36 +86,6 @@ class Game
 		else
 			board.update_piece(from, to)
 		end
-	end
-
-	def check?(from, to)
-		copy = Marshal.load(Marshal.dump(@board))
-		copy.update_piece(from, to)
-		copy.under_attack?(copy.locate_king(current.color))
-	end
-
-	def checkmate?
-		pieces = board.grid.flatten.select do |square|
-			square.class != String && square.color == current.color
-		end.each do |piece|
-			moves = piece.possible_moves(@board)
-			moves.each do |move|
-				return false unless check?([piece.rank, piece.file], move)
-			end
-		end
-		true
-	end
-
-	def promotion?(from, to)
-		pawn = board.grid[from[0]][from[1]]
-		return false unless pawn.class == Pawn
-		return true if pawn.color == "White" && to[0] == 0
-		return true if pawn.color == "Black" && to[0] == 7
-	end
-
-	def game_over
-		swap
-		puts "Checkmate! #{current.color} wins!"
 	end
 
 	def select_file
@@ -169,6 +130,53 @@ class Game
 			puts "Sorry, that file does not contain a saved game. Starting new game..."
 		end
 		sleep(3)
+	end
+
+	def game_over
+		swap
+		puts "Checkmate! #{current.color} wins! Play again?"
+		gets.chomp.downcase[0] == "y" ? restart : exit
+	end
+
+	def convert(spot)
+		spot = spot.split("")
+		char = { "a" => 0, "b" => 1, "c" => 2, "d" => 3, "e" => 4, "f" => 5, "g" => 6,	"h" => 7, 
+						 "8" => 0, "7" => 1, "6" => 2, "5" => 3, "4" => 4, "3" => 5, "2" => 6,	"1" => 7 }
+		[char[spot[1]], char[spot[0]]]
+	end
+
+	def swap
+		@current = @current.color == "White" ? @black : @white
+	end
+
+	def promotion?(from, to)
+		pawn = board.grid[from[0]][from[1]]
+		return false unless pawn.class == Pawn
+		return true if pawn.color == "White" && to[0] == 0
+		return true if pawn.color == "Black" && to[0] == 7
+	end
+
+	def check?(from, to)
+		copy = Marshal.load(Marshal.dump(@board))
+		copy.update_piece(from, to)
+		copy.under_attack?(copy.locate_king(current.color))
+	end
+
+	def checkmate?
+		pieces = board.grid.flatten.select do |square|
+			square.class != String && square.color == current.color
+		end.each do |piece|
+			moves = piece.possible_moves(@board)
+			moves.each do |move|
+				return false unless check?([piece.rank, piece.file], move)
+			end
+		end
+		true
+	end
+
+	def restart
+		game = Game.new
+		game.setup
 	end
 end
 
