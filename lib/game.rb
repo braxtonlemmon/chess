@@ -5,9 +5,10 @@ require "./lib/player.rb"
 require "yaml"
 
 class Game
-	attr_reader :white, :black, :current, :board, :filename
+	attr_reader :white, :black, :current, :board, :filename, :ai
 
 	def initialize
+		@ai = false
 		@filename = nil
 		@white = Player.new("White")
 		@black = Player.new("Black")
@@ -16,8 +17,10 @@ class Game
 	end
 
 	def setup
-		puts "Welcome to Chess! Press [y] to load a saved game or any other for a new game."
+		puts "Welcome to Chess! Press [y] to load a saved game or any other key for a new game."
 		gets.chomp.downcase[0] == 'y' ? load_game : (puts "Starting new game...")
+		puts "Would you (White) like to play against the computer (Black)? [y] [n]"
+		@ai = (gets.chomp.downcase[0] == 'y') ? true : false
 		play
 	end
 
@@ -62,9 +65,30 @@ class Game
 		end
 	end
 
+	def ai_turn
+		while true
+			from, to = gen_random_move
+			if !check?(from, to)
+				move(from, to)
+				@board.last = [from, to]
+				puts "Computer move: #{ai_convert(from)} to #{ai_convert(to)}"
+				break
+			end
+		end
+	end
+
+	def gen_random_move
+		pieces = board.grid.flatten.select do |x|
+			x.class != String && x.color == current.color && x.possible_moves(board).size > 0
+		end
+		piece = pieces.sample
+		move = piece.possible_moves(board).sample	
+		[[piece.rank, piece.file], move]
+	end
+
 	def play
 		until checkmate?
-			turn
+			(@ai && @current.color == "Black") ? ai_turn : turn
 			swap
 		end
 		board.show
@@ -106,7 +130,8 @@ class Game
 				black: @black,
 				current: @current,
 				board: @board,
-				filename: @filename
+				filename: @filename,
+				ai: @ai
 			})
 			file.puts save
 		end
@@ -125,6 +150,7 @@ class Game
 			@current = saved_info[:current]
 			@board = saved_info[:board]
 			@filename = saved_info[:filename]
+			@ai = saved_info[:ai]
 			puts "Loading game..."
 		else
 			puts "Sorry, that file does not contain a saved game. Starting new game..."
@@ -143,6 +169,12 @@ class Game
 		char = { "a" => 0, "b" => 1, "c" => 2, "d" => 3, "e" => 4, "f" => 5, "g" => 6,	"h" => 7, 
 						 "8" => 0, "7" => 1, "6" => 2, "5" => 3, "4" => 4, "3" => 5, "2" => 6,	"1" => 7 }
 		[char[spot[1]], char[spot[0]]]
+	end
+
+	def ai_convert(spot)
+		char0 = { 0 => "a", 1 => "b", 2 => "c", 3 => "d", 4 => "e", 5 => "f", 6 => "g", 7 => "h" }
+		char1 = { 0 => 8, 1 => 7, 2 => 6, 3 => 5, 4 => 4, 5 => 3, 6 => 2, 7 => 1 }
+		"#{char0[spot[1]]}#{char1[spot[0]]}"
 	end
 
 	def swap
