@@ -60,7 +60,9 @@ class Game
 				@board.last = [from, to]
 				break
 			end
-			puts "You can't do that."
+			puts "\n\n|********************|"
+			puts "| You can't do that! |"
+			puts "|____________________|"
 		end
 	end
 

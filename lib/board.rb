@@ -40,18 +40,15 @@ class Board
 	def show
 		puts
 		x = 8
-		n = 0
 		(0..7).each do |rank|
 			line = []
 			(0..7).each { |file| line << (spot_empty?(rank,file) ? "•" : grid[rank][file].symbol) }
-			puts " " + line.join("  ") + " #{x}" + " [#{n}]"
-			n += 1
+			puts line.join("  ") + "  #{x} "
 			x -= 1
 		end
-		("a".."h").each { |char| print " #{char} " }
+		print "a "
+		("b".."h").each { |char| print " #{char} " }
 		puts
-		(0..7).each { |num| print "[#{num}]" }
-		puts puts
 	end
 
 	def spot_empty?(rank, file)
