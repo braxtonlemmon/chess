@@ -17,4 +17,7 @@ Project: Ruby Final Project from The Odin Project [curriculum](https://www.theod
 * The computer opponent makes random legal moves.
 * Players can save and load games.
 
+## To run
+* Download chess repository to your local machine
+* Navigate to the repository and run ruby ./lib/game.rb
 
