@@ -10,4 +10,11 @@ Project: Ruby Final Project from The Odin Project [curriculum](https://www.theod
 * Keep classes and methods modular and clean.
 * Build an AI computer player that makes random legal moves.
 
+## Information
+
+* Player(s) can choose to play human-human or human-computer.
+* In human vs. computer, human is white and computer is black.
+* The computer opponent makes random legal moves.
+* Players can save and load games.
+
 
