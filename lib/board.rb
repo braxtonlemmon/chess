@@ -21,22 +21,6 @@ class Board
 		@grid[coordinates[0]][coordinates[1]]
 	end
 
-	def set
-		rooks   = [[0, 0], [0, 7], [7, 0], [7, 7]]
-		knights = [[0, 1], [0, 6], [7, 1], [7, 6]]
-		bishops = [[0, 2], [0, 5], [7, 2], [7, 5]]
-		queens  = [[0, 3], [7, 3]]
-		kings   = [[0, 4], [7, 4]]
-		pawns   = [[1,0], [1,1], [1,2], [1,3], [1,4], [1,5], [1,6], [1,7],
-							 [6,0], [6,1], [6,2], [6,3], [6,4], [6,5], [6,6], [6,7]]
-		rooks.each { |n| @grid[n[0]][n[1]] = Rook.new(n[0], n[1]) }
-		knights.each { |n| @grid[n[0]][n[1]] = Knight.new(n[0], n[1]) }
-		bishops.each { |n| @grid[n[0]][n[1]] = Bishop.new(n[0], n[1]) }
-		queens.each { |n| @grid[n[0]][n[1]] = Queen.new(n[0], n[1]) }
-		kings.each { |n| @grid[n[0]][n[1]] = King.new(n[0], n[1]) }
-		pawns.each { |n| @grid[n[0]][n[1]] = Pawn.new(n[0], n[1]) }
-	end
-
 	def show
 		puts
 		x = 8
@@ -53,14 +37,6 @@ class Board
 
 	def spot_empty?(rank, file)
 		(grid[rank][file] == " ") ? true : false
-	end
-
-	def spot_available?(from, to)
-		return true if spot_empty?(to[0], to[1])
-		color1 = grid[from[0]][from[1]].color
-		color2 = grid[to[0]][to[1]].color
-		return true if color1 != color2
-		false
 	end
 
 	def update_piece(from, to)
@@ -107,6 +83,63 @@ class Board
 		false
 	end
 	
+	def locate_king(color)
+		king = grid.flatten.find do |square| 
+			square.class == King && square.color == color 
+		end
+		[king.rank, king.file]
+	end
+
+	def under_attack?(spot)
+		grid.any? do |row|
+			row.any? do |square|
+				if square.class != String
+					square.possible_moves(self) 
+					square.plays.include?(spot) 
+				end
+			end
+		end
+	end
+
+	def path_clear?(from, to)
+		if from[0] == to[0]
+			return true if horizontal_clear?(from, to)
+		elsif from[1] == to[1]
+			return true if vertical_clear?(from, to)
+		elsif ((from[0] - to[0])**2) == ((from[1] - to[1])**2)
+			return true if diagonal_clear?(from, to)
+		elsif grid[from[0]][from[1]].class == Knight
+			return true
+		end
+		false
+	end
+	
+	private
+
+	def set
+		rooks   = [[0, 0], [0, 7], [7, 0], [7, 7]]
+		knights = [[0, 1], [0, 6], [7, 1], [7, 6]]
+		bishops = [[0, 2], [0, 5], [7, 2], [7, 5]]
+		queens  = [[0, 3], [7, 3]]
+		kings   = [[0, 4], [7, 4]]
+		pawns   = [[1,0], [1,1], [1,2], [1,3], [1,4], [1,5], [1,6], [1,7],
+							 [6,0], [6,1], [6,2], [6,3], [6,4], [6,5], [6,6], [6,7]]
+		rooks.each { |n| @grid[n[0]][n[1]] = Rook.new(n[0], n[1]) }
+		knights.each { |n| @grid[n[0]][n[1]] = Knight.new(n[0], n[1]) }
+		bishops.each { |n| @grid[n[0]][n[1]] = Bishop.new(n[0], n[1]) }
+		queens.each { |n| @grid[n[0]][n[1]] = Queen.new(n[0], n[1]) }
+		kings.each { |n| @grid[n[0]][n[1]] = King.new(n[0], n[1]) }
+		pawns.each { |n| @grid[n[0]][n[1]] = Pawn.new(n[0], n[1]) }
+	end
+
+	def spot_available?(from, to)
+		return true if spot_empty?(to[0], to[1])
+		color1 = grid[from[0]][from[1]].color
+		color2 = grid[to[0]][to[1]].color
+		return true if color1 != color2
+		false
+	end
+
 	def horizontal_clear?(from, to)
 		files = from[1] < to[1] ? ((from[1] + 1)...to[1]) : ((to[1] + 1)...from[1])
 		return true if files.all? { |file| spot_empty?(from[0], file) }
@@ -144,36 +177,5 @@ class Board
 			end
 		end
 		false
-	end
-
-	def path_clear?(from, to)
-		if from[0] == to[0]
-			return true if horizontal_clear?(from, to)
-		elsif from[1] == to[1]
-			return true if vertical_clear?(from, to)
-		elsif ((from[0] - to[0])**2) == ((from[1] - to[1])**2)
-			return true if diagonal_clear?(from, to)
-		elsif grid[from[0]][from[1]].class == Knight
-			return true
-		end
-		false
-	end
-
-	def locate_king(color)
-		king = grid.flatten.find do |square| 
-			square.class == King && square.color == color 
-		end
-		[king.rank, king.file]
-	end
-
-	def under_attack?(spot)
-		grid.any? do |row|
-			row.any? do |square|
-				if square.class != String
-					square.possible_moves(self) 
-					square.plays.include?(spot) 
-				end
-			end
-		end
 	end
 end
