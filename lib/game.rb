@@ -16,25 +16,25 @@ class Game
 	end
 
 	def setup
-		puts "Welcome to Chess! Load a saved game?"
-		load_game if gets.chomp.downcase[0] == 'y'
+		puts "Welcome to Chess! Press [y] to load a saved game or any other for a new game."
+		gets.chomp.downcase[0] == 'y' ? load_game : (puts "Starting new game...")
 		play
 	end
 
 	private
 
 	def ask_user_choice
-		board.show
 		from = ""
 		to = ""
-
 		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
+			board.show
 			puts "   [s]...save and quit        [x]...quit without saving"
 			puts "#{current.color}, enter coordinates of piece to move:"
 			from = gets.chomp
 			save_game if from.downcase[0] == "s"
 			exit if from.downcase[0] == "x"
 		end
+
 		until (to[0] =~ /[a-h]/) && (to[1] =~ /[1-8]/) && to.length == 2
 			puts "Enter coordinates of where to move #{from}: "
 			to = gets.chomp
