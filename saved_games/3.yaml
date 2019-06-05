@@ -1,7 +1,7 @@
 ---
-:white: !ruby/object:Player
+:white: &1 !ruby/object:Player
   color: White
-:black: &1 !ruby/object:Player
+:black: !ruby/object:Player
   color: Black
 :current: *1
 :board: !ruby/object:Board
@@ -159,6 +159,7 @@
         - -7
       - - 7
         - 7
+      plays: []
     - !ruby/object:Queen
       rank: 0
       file: 3
@@ -277,6 +278,7 @@
         - -7
       - - 7
         - 7
+      plays: []
     - !ruby/object:King
       rank: 0
       file: 4
@@ -300,6 +302,7 @@
         - -1
       - - -1
         - -1
+      plays: []
     - !ruby/object:Bishop
       rank: 0
       file: 5
@@ -362,28 +365,8 @@
         - -7
       - - 7
         - 7
-    - !ruby/object:Knight
-      rank: 0
-      file: 6
-      color: Black
-      symbol: "♘"
-      moves:
-      - - -2
-        - -1
-      - - -2
-        - 1
-      - - -1
-        - -2
-      - - -1
-        - 2
-      - - 1
-        - -2
-      - - 1
-        - 2
-      - - 2
-        - -1
-      - - 2
-        - 1
+      plays: []
+    - " "
     - !ruby/object:Rook
       rank: 0
       file: 7
@@ -447,46 +430,160 @@
         - 0
       - - 0
         - -7
+      plays:
+      - - 1
+        - 7
   - - !ruby/object:Pawn
       rank: 1
       file: 0
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 0
+      - - 3
+        - 0
     - !ruby/object:Pawn
       rank: 1
       file: 1
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 1
+      - - 3
+        - 1
     - !ruby/object:Pawn
       rank: 1
       file: 2
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 2
+      - - 3
+        - 2
     - !ruby/object:Pawn
       rank: 1
       file: 3
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 3
+      - - 3
+        - 3
     - !ruby/object:Pawn
       rank: 1
       file: 4
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 4
+      - - 3
+        - 4
     - !ruby/object:Pawn
       rank: 1
       file: 5
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 5
+      - - 3
+        - 5
     - !ruby/object:Pawn
       rank: 1
       file: 6
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      - - 2
+        - 0
+      plays:
+      - - 2
+        - 6
+      - - 3
+        - 6
+      - - 2
+        - 7
+    - " "
+  - - " "
+    - " "
+    - " "
+    - " "
+    - " "
+    - !ruby/object:Knight
+      rank: 2
+      file: 5
+      color: Black
+      symbol: "♘"
+      moves:
+      - - -2
+        - -1
+      - - -2
+        - 1
+      - - -1
+        - -2
+      - - -1
+        - 2
+      - - 1
+        - -2
+      - - 1
+        - 2
+      - - 2
+        - -1
+      - - 2
+        - 1
+      plays:
+      - &2
+        - 2
+        - 5
+    - " "
     - !ruby/object:Pawn
-      rank: 1
+      rank: 2
       file: 7
       color: Black
       symbol: "♙"
+      moves:
+      - - 1
+        - 0
+      plays:
+      - - 3
+        - 7
   - - " "
     - " "
     - " "
@@ -498,31 +595,19 @@
   - - " "
     - " "
     - " "
-    - " "
-    - " "
-    - " "
-    - " "
-    - " "
-  - - " "
     - " "
     - " "
     - !ruby/object:Pawn
       rank: 4
-      file: 3
+      file: 5
       color: White
       symbol: "♟"
       moves:
       - - -1
         - 0
-      - - -2
-        - 0
       plays:
-      - - 5
-        - 3
-      - - 4
-        - 3
-    - " "
-    - " "
+      - - 3
+        - 5
     - " "
     - " "
   - - " "
@@ -558,17 +643,17 @@
       file: 2
       color: White
       symbol: "♟"
-    - " "
+    - !ruby/object:Pawn
+      rank: 6
+      file: 3
+      color: White
+      symbol: "♟"
     - !ruby/object:Pawn
       rank: 6
       file: 4
       color: White
       symbol: "♟"
-    - !ruby/object:Pawn
-      rank: 6
-      file: 5
-      color: White
-      symbol: "♟"
+    - " "
     - !ruby/object:Pawn
       rank: 6
       file: 6
@@ -642,6 +727,7 @@
         - 0
       - - 0
         - -7
+      plays: []
     - !ruby/object:Knight
       rank: 7
       file: 1
@@ -1021,8 +1107,8 @@
   - 
   - 
   last:
-  - - 6
-    - 3
-  - - 4
-    - 3
+  - - 0
+    - 6
+  - *2
 :filename: '3'
+:ai: true

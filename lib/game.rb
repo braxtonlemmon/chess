@@ -17,9 +17,11 @@ class Game
 	end
 
 	def setup
-		puts "Welcome to Chess! Press [y] to load a saved game or any other key for a new game."
+		puts "Welcome to Chess! Enter [y] to load a saved game or any other key for a new game."
+		puts "Then press Enter to continue."
 		gets.chomp.downcase[0] == 'y' ? load_game : (puts "Starting new game...")
 		puts "Would you (White) like to play against the computer (Black)? [y] [n]"
+		puts "Then press Enter to continue."
 		@ai = (gets.chomp.downcase[0] == 'y') ? true : false
 		play
 	end
@@ -32,7 +34,7 @@ class Game
 		until (from[0] =~ /[a-h]/) && (from[1] =~ /[1-8]/) && from.length == 2
 			board.show
 			puts "   [s]...save and quit        [x]...quit without saving"
-			puts "#{current.color}, enter coordinates of piece to move:"
+			puts "#{current.color}, enter coordinates of piece to move (\"d2\" for example):"
 			from = gets.chomp
 			save_game if from.downcase[0] == "s"
 			exit if from.downcase[0] == "x"
